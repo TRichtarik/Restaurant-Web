@@ -1,0 +1,30 @@
+image: node:latest
+
+stages:
+  - backend
+  - frontend
+
+lint-backend:
+  stage: backend
+  tags:
+    - shared-fi
+  rules:
+    - changes:
+      - backend/**/*
+  script:
+    - cd backend
+    - npm install
+    - npm run lint
+
+lint-and-build-frontend:
+  stage: frontend
+  tags:
+    - shared-fi
+  rules:
+    - changes:
+      - frontend/**/*
+  script:
+    - cd frontend
+    - npm install
+    - npm run lint
+    - npm run build

@@ -1,0 +1,78 @@
+@startuml restaurant_corona
+
+hide circle
+skinparam Linetype ortho
+skinparam Ranksep 60
+skinparam Nodesep 100
+
+entity User {
+  * id: Int
+  ---
+  * email: String
+  * name: String
+  * surname: String
+  * phoneNumber: String
+  * hashedPassword: String
+  * createdAt: DateTime
+  deletedAt: DateTime
+  * role: String
+}
+
+entity Order {
+  * id: Int
+  ---
+  * creatorId: Int
+  * totalPrice: Decimal
+}
+
+entity MenuItem {
+  * id: Int
+  ---
+  * description: String
+  * price: Decimal
+  * type: String
+  * restaurantId: Int
+  * isListed: Boolean
+}
+
+entity Menu {
+  * id: Int
+  ---
+  * date: DateTime
+}
+
+entity Restaurant {
+  * id: Int
+  ---
+  * name: String
+  photo: String
+  * description: String
+  * createdAt: DateTime
+  deletedAt: DateTime
+}
+
+entity OpeningHour {
+  * id: Int
+  ---
+  * dayOfWeek: Int
+  * openingTime: DateTime
+  * closingTime: DateTime
+}
+
+entity Address {
+  * id: Int
+  ---
+  * address: String
+  * city: String
+  * zipCode: String
+}
+
+User ||..o{ Order : "creates"
+User |o..|{ Address
+Restaurant |o..|| Address
+Order }o..|{ MenuItem : "contains"
+Menu }o..|| Restaurant : "belongs to"
+Menu ||..|{ MenuItem
+Restaurant ||..|{ OpeningHour
+
+@enduml

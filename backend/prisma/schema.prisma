@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  name           String
+  surname        String
+  phoneNumber    String
+  hashedPassword String
+  addresses      Address[]
+  createdAt      DateTime  @default(now())
+  deletedAt      DateTime?
+  role           UserRole
+  orders         Order[]
+}
+
+enum UserRole {
+  CUSTOMER
+  MANAGER
+}
+
+model Order {
+  id           Int        @id @default(autoincrement())
+  creator      User       @relation(fields: [creatorId], references: [id])
+  creatorId    Int
+  items        MenuItem[]
+  totalPrice   Decimal
+  type         OrderType
+  createdAt    DateTime   @default(now())
+  scheduledFor DateTime
+  state        OrderState
+}
+
+enum OrderType {
+  DELIVERY
+  PICK_UP
+}
+
+enum OrderState {
+  CANCELLED
+  WAITING_FOR_PAYMENT
+  PREPARING
+  READY
+}
+
+model MenuItem {
+  id          Int     @id @default(autoincrement())
+  description String
+  price       Decimal
+  type        MenuItemType
+  menu        Menu    @relation(fields: [menuId], references: [id])
+  menuId      Int
+  orders      Order[]
+}
+
+enum MenuItemType {
+  SOUP
+  MAIN_COURSE
+  DESSERT
+  ALCOHOLIC_BEVERAGE
+  NON_ALCOHOLIC_BEVERAGE
+}
+
+model Menu {
+  id           Int        @id @default(autoincrement())
+  date         DateTime
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId Int
+  menuItems    MenuItem[]
+}
+
+model Restaurant {
+  id           Int           @id @default(autoincrement())
+  name         String
+  photo        String?
+  description  String
+  address      Address?
+  createdAt    DateTime      @default(now())
+  deletedAt    DateTime?
+  menus        Menu[]
+  openingHours OpeningHour[]
+}
+
+model OpeningHour {
+  id           Int        @id @default(autoincrement())
+  dayOfWeek    Int // Represents the day of the week (0 for Monday, 1 for Tuesday, etc.)
+  openingTime  DateTime
+  closingTime  DateTime
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId Int
+
+  @@unique([dayOfWeek, restaurantId], name: "restaurantOpeningDay")
+}
+
+model Address {
+  id           Int         @id @default(autoincrement())
+  address      String
+  city         String
+  zipCode      String
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id])
+  restaurantId Int?        @unique
+  user         User?       @relation(fields: [userId], references: [id])
+  userId       Int?
+}

@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  html {
+    @apply font-poppins;
+  }
+
+  #root {
+    @apply h-screen max-h-screen overflow-auto;
+  }
+
+  input {
+    @apply mb-1 border-gray-300 border-2 rounded-lg h-8
+  }
+
+  label {
+    @apply mb-1 text-xs inline-block font-medium tracking-tight
+  }
+
+  
+}
+
+@layer components {
+  .error {
+    @apply text-red-500 text-xs inline-block font-medium tracking-tight
+  }
+
+  .checkbox {
+    @apply h-4 w-4 text-blue-500
+  }
+
+  
+}
